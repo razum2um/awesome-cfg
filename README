@@ -1,5 +1,3 @@
-Hi! This project grows from my attempt to setup awesome.
-
 DIRECTORY STRUCTURE
 ===================
 
@@ -54,40 +52,13 @@ DEFAULT KEYBINDINGS
 
 Here are some default bindings:
 
-Client keys
------------
-
-altkey+` - show client context menu
-Ctrl+modkey+d - start client settings chord
-Ctrl+modkey+d,c - Center client
-Ctrl+modkey+d,l - Toggle client to be floating
-Ctrl+modkey+d,d - Rename a client (set new title)
-and so on (read tooltip)
-
-altkey+1 - prev client
-altkey+2 - next client
-altkey+tab - toggle last 2 active clients
-
-Tag keys
---------
-
-altkey+F1 - jump to one tag left
-altkey+F2 - jump to one tag right
-modkey+F1 - move focused client one tag left
-modkey+F2 - move focused client one tag right
-modkey+tab - switch to previous tag
-
-Crtl+modkey+s - begin tag manipulation chord (tooltip will appear)
-Crtl+modkey+s,s - rename current tag
-Crtl+modkey+s,c - create a tag
-Crtl+modkey+s,d - delete current tag
-and so on
+*) Awesome's default
 
 Menus
 -----
 
-altkey+Esc - show main menu
-altkey+` - show client menu
+modkey+w - show main menu
+altkey+e - show client menu
 
 There are vim keybindings defined for menus 
 (hjkl - move, o - open, x - back, Enter - open)
@@ -106,7 +77,12 @@ TODO
 *) Add some online translator support
 
 --
+Author:
+
 Thanks for your interest! 
 Mail bugs and questions to ierton@gmail.com
 Sergey.
 
+Forked:
+
+razum2um
