@@ -139,7 +139,7 @@ function add(tn, props, s)
     if tname == nil then return end
 	local t = awful.tag.add(tname)
 	t.screen = s
-	awful.layout.set(props.layout or awful.layout.suit.max, t)
+	awful.layout.set(props.layout or awful.layout.suit.tile, t)
 	if props.setsel == true then t.selected = true end
 	awesome.emit_signal("tagman::update", t)
 	return t

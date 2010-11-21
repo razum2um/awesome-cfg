@@ -20,6 +20,40 @@ require("myrc.keybind")
 require("myrc.memory")
 require("myrc.logmon")
 
+-- {{{ Define keycodes instead of symbols
+-- achieved by
+-- xev &>/tmp/keycodes
+-- ...pressing keys
+-- cat /tmp/keycodes | grep keycode | awk '{print $7 " = \"#" $4 "\""}' | tr -d '),' | uniq
+
+a = "#38"
+b = "#56"
+c = "#54"
+d = "#40"
+e = "#26"
+f = "#41"
+g = "#42"
+h = "#43"
+i = "#31"
+j = "#44"
+k = "#45"
+l = "#46"
+m = "#58"
+n = "#57"
+o = "#32"
+p = "#33"
+q = "#24"
+r = "#27"
+s = "#39"
+t = "#28"
+u = "#30"
+v = "#55"
+w = "#25"
+x = "#53"
+y = "#29"
+z = "#52"
+-- }}}
+
 --{{{ Debug 
 function dbg(vars)
 	local text = ""
@@ -60,7 +94,7 @@ end
 
 function client_adjust_bwidth(c)
     if awful.client.floating.get(c) == false and 
-       awful.layout.get() == awful.layout.suit.max
+       awful.layout.get() == awful.layout.suit.tile
     then
         c.border_width = 0
     else
@@ -123,23 +157,27 @@ end
 modkey = "Mod4"
 altkey = "Mod1"
 
+terminal = "urxvt -fn xft:Terminus:pixelsize=14 -tr -tint black -depth 32 -fg grey90 -bg rgba:0000/0000/4444/cccc"
 -- Helper variables
 env = {
+    -- terminal = "xterm ", 
+    -- terminal = "urxvt -fn xft:Terminus:pixelsize=14 -tr -tint black -depth 32 -fg grey90 -bg rgba:0000/0000/4444/cccc",
+    terminal = terminal,
+    -- editor = os.getenv("EDITOR") or "xterm -e vim ",
+    editor = os.getenv("EDITOR") or "nano",
     browser = "firefox ",
-    man = "xterm -e man ",
-    terminal = "xterm ", 
-    screen = "xterm -e screen",
-    fileman = "xterm -e mc",
-    terminal_root = "xterm -e su -c screen",
+    man = terminal .. " -e man ",
+    screen = terminal .. " -e screen -x -RR",
+    fileman = terminal .. " -e mc",
+    terminal_root = terminal .. " -e su -c screen -D -R",
     im = "pidgin ",
-    editor = os.getenv("EDITOR") or "xterm -e vim ",
     home_dir = os.getenv("HOME"),
     music_show = "gmpc --replace",
     music_hide = "gmpc --quit",
     run = "gmrun",
     locker = "xscreensaver-command -lock",
     xkill = "xkill",
-    shutdown = "xterm -e " .. awful.util.getdir("config").."/shutdown"
+    shutdown = "xterm -e " .. awful.util.getdir("config").."/shutdown",
 }
 
 -- Pipelets
@@ -159,14 +197,14 @@ naughty.config.presets.critical.width = logmon_width
 -- Table of layouts to cover with awful.layout.inc, order matters.
 layouts = 
 {
-    awful.layout.suit.max,
-    awful.layout.suit.tile.bottom,
+    -- awful.layout.suit.tile.bottom,
     awful.layout.suit.tile,
-    awful.layout.suit.tile.left,
-    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
+    -- awful.layout.suit.tile.left,
+    -- awful.layout.suit.tile.top,
+    -- awful.layout.suit.fair,
     awful.layout.suit.fair.horizontal,
-    awful.layout.suit.magnifier,
+    -- awful.layout.suit.magnifier,
+    -- awful.layout.suit.max,
     awful.layout.suit.floating
 }
 
@@ -214,7 +252,7 @@ mysystray = widget({ type = "systray" })
 
 -- Create a wibox for each screen and add it
 mytop = {}
-mybottom = {}
+-- mybottom = {}
 mypromptbox = {}
 
 -- Clock
@@ -227,16 +265,16 @@ mymountbox = widget({ type = "textbox", align="right" })
 pipelets.register_fmt( mymountbox, "mmount", " $1")
 
 -- BatteryBox
-mybatbox = widget({ type = "textbox", align="right" })
-pipelets.register( mybatbox, "batmon")
+-- mybatbox = widget({ type = "textbox", align="right" })
+-- pipelets.register( mybatbox, "batmon")
 
 -- Kbdbox
-mykbdbox = widget({ type = "textbox", align="right" })
-pipelets.register_fmt( mykbdbox, "kbd", " $1 ")
+-- mykbdbox = widget({ type = "textbox", align="right" })
+-- pipelets.register_fmt( mykbdbox, "kbd", " $1 ")
 
 -- Wifi assoc ESSID
-mywifibox = widget({ type = "textbox", align="right" })
-pipelets.register_fmt( mywifibox, "wireless", "<span color='#4169E1'> $1</span>")
+-- mywifibox = widget({ type = "textbox", align="right" })
+-- pipelets.register_fmt( mywifibox, "wireless", "<span color='#4169E1'> $1</span>")
 
 -- Layoutbox
 mylayoutbox = {}
@@ -334,18 +372,18 @@ for s = 1, screen.count() do
 	}
 
     -- Create bottom wibox
-    mybottom[s] = awful.wibox({ 
-        position = "bottom", screen = s, height = beautiful.wibox_bottom_height})
-    mybottom[s].widgets = {
-        {
-            mykbdbox,
-            layout = awful.widget.layout.horizontal.rightleft
-        },
-        mybatbox,
-        mymountbox,
-        mywifibox,
-        layout = awful.widget.layout.horizontal.leftright
-    }
+    -- mybottom[s] = awful.wibox({ 
+        -- position = "bottom", screen = s, height = beautiful.wibox_bottom_height})
+    -- mybottom[s].widgets = {
+        -- {
+            -- mykbdbox,
+            -- layout = awful.widget.layout.horizontal.rightleft
+        -- },
+        -- mybatbox,
+        -- mymountbox,
+        -- mywifibox,
+        -- layout = awful.widget.layout.horizontal.leftright
+    -- }
 
 end
 -- }}}
@@ -515,7 +553,7 @@ end
 function chord_mpd()
     return {
         menu = {
-            height = theme.menu_context_height
+           height = theme.menu_context_height
         },
         naughty = {
             title = "::MPD::"
@@ -615,97 +653,230 @@ function chord_tags()
     }
 end
 
--- Bind keyboard digits
+-- {{{ Key bindings
 globalkeys = awful.util.table.join(
+    awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
+    awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
+    awful.key({ modkey,           }, "Up",   function () awful.util.spawn("amixer sset Master 5%+")    end),
+    awful.key({ modkey,           }, "Down", function () awful.util.spawn("amixer sset Master 5%-")    end),
 
-    -- Main menu
-    awful.key({ altkey            }, "Escape", function() mymainmenu:show(mainmenu_args) end),
+    awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
 
-    -- Awesome control
-    awful.key({ modkey, "Control" }, "q", awesome.quit),
-    awful.key({ modkey, "Control" }, "r", function() 
-        mypromptbox[mouse.screen].widget.text = awful.util.escape(awful.util.restart())
-    end),
-
-    -- Application hotkeys
-    awful.key({ modkey            }, "f", function () awful.util.spawn(env.browser) end),
-    awful.key({ modkey            }, "e", function () awful.util.spawn(env.screen)  end),
-    awful.key({                   }, "Scroll_Lock", function () awful.util.spawn(env.locker) end),
-    awful.key({ modkey            }, "r", function () mypromptbox[mouse.screen]:run() end),
-    awful.key({ modkey,           }, "m", function () run_or_raise("gmpc", { class = "Gmpc" }) end),
-    awful.key({ modkey            }, "p", function () awful.util.spawn("pidgin") end),
-    awful.key({ modkey            }, "c", function () run_or_raise("xterm -e calc", { class="XTerm", name = "calc" }) end),
-
-    -- Tag hotkeys
-    awful.key({ modkey, "Control" }, "m", function () toggle_tag("im") end),
-    awful.key({ modkey, "Control" }, "w", function () toggle_tag("work") end),
-    awful.key({ modkey, "Control" }, "n", function () toggle_tag("net") end),
-    awful.key({ modkey, "Control" }, "f", function () toggle_tag("fun") end),
-    awful.key({ modkey, "Control" }, "e", function () toggle_tag("sys") end),
-    awful.key({ modkey            }, "Tab", function() awful.tag.history.restore() end),
-
-    -- Client manipulation
-    awful.key({ altkey            }, "j", function () switch_to_client(-1) end),
-    awful.key({ altkey            }, "k", function () switch_to_client(1) end),
-    awful.key({ altkey            }, "1", function () switch_to_client(-1) end),
-    awful.key({ altkey            }, "2", function () switch_to_client(1) end),
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(1) end),
-    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx(-1) end),
-    awful.key({ altkey            }, "Tab", function() switch_to_client(0) end),
+    awful.key({ modkey,           }, "j",
+        function ()
+            awful.client.focus.byidx( 1)
+            if client.focus then client.focus:raise() end
+        end),
+    awful.key({ modkey,           }, "k",
+        function ()
+            awful.client.focus.byidx(-1)
+            if client.focus then client.focus:raise() end
+        end),
+    awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end),
 
     -- Layout manipulation
-    awful.key({ altkey,           }, "F1", awful.tag.viewprev ),
-    awful.key({ altkey,           }, "F2", awful.tag.viewnext ),
-    awful.key({ altkey,           }, "h", function () awful.tag.incmwfact(-0.05) end),
-    awful.key({ altkey,           }, "l", function () awful.tag.incmwfact(0.05) end),
-    awful.key({ altkey, "Shift"   }, "h", function () awful.tag.incnmaster(1) end),
-    awful.key({ altkey, "Shift"   }, "l", function () awful.tag.incnmaster(-1) end),
-    awful.key({ altkey, "Control" }, "h", function () awful.tag.incncol(1) end),
-    awful.key({ altkey, "Control" }, "l", function () awful.tag.incncol(-1) end),
-    awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts, 1) end),
+    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
+    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
+    awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
+    awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end),
+    awful.key({ modkey,           }, "u", awful.client.urgent.jumpto),
+    awful.key({ modkey,           }, "Tab",
+        function ()
+            awful.client.focus.history.previous()
+            if client.focus then
+                client.focus:raise()
+            end
+        end),
+
+    -- Standard program
+    -- awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
+    awful.key({ modkey, "Control" }, "r", awesome.restart),
+    awful.key({ modkey, "Shift"   }, "q", awesome.quit),
+
+    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
+    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
+    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1)      end),
+    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1)      end),
+    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1)         end),
+    awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1)         end),
+    awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts,  1) end),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
+
+    -- mine
+    awful.key({ modkey }, z, function () awful.util.spawn("ncmpcpp prev")         end),
+    awful.key({ modkey }, x, function () awful.util.spawn("ncmpcpp play")         end),
+    awful.key({ modkey }, c, function () awful.util.spawn("ncmpcpp toggle")       end),
+    awful.key({ modkey }, v, function () awful.util.spawn("ncmpcpp stop")         end),
+    awful.key({ modkey }, b, function () awful.util.spawn("ncmpcpp next")         end),
+    awful.key({ modkey }, s, function () awful.util.spawn("ncmpcpp volume +5")    end),
+    awful.key({ modkey }, d, function () awful.util.spawn("ncmpcpp volume -5")    end),
+    
+    -- imported
+    awful.key({ modkey,           }, "w", function() mymainmenu:show(mainmenu_args) end),
+    awful.key({ modkey            }, "Return", function () awful.util.spawn(env.screen)  end),
+    awful.key({ altkey            }, "f", function () run_or_raise(env.browser) end),
     awful.key({ altkey,           }, "e", function () 
         myrc.keybind.push_menu(chord_mpd(), chord_menu_args) 
     end),
 
-    -- Tagset operations (Win+Ctrl+s,<letter> chords)
-    awful.key({ altkey,           }, "F3", function () 
-        myrc.keybind.push_menu(chord_tags(), chord_menu_args) 
-    end)
+    -- Prompt
+    awful.key({ modkey },            "r",     function () mypromptbox[mouse.screen]:run() end),
+
+    awful.key({ modkey }, "X",
+              function ()
+                  awful.prompt.run({ prompt = "Run Lua code: " },
+                  mypromptbox[mouse.screen].widget,
+                  awful.util.eval, nil,
+                  awful.util.getdir("cache") .. "/history_eval")
+              end)
 )
 
-root.keys(globalkeys)
-
 clientkeys = awful.util.table.join(
-    awful.key({ modkey }, "F1", function (c) 
-        local tag = myrc.tagman.getn(-1)
-        awful.client.movetotag(tag, c)
-        awful.tag.viewonly(tag)
-        c:raise()
-    end),
-    awful.key({ modkey }, "F2", function (c) 
-        local tag = myrc.tagman.getn(1)
-        awful.client.movetotag(tag, c)
-        awful.tag.viewonly(tag)
-        c:raise()
-    end),
-    awful.key({ altkey }, "F4", function (c) 
-        c:kill() 
-    end),
-    awful.key({ altkey }, "F5", function (c)
-        c.maximized_horizontal = not c.maximized_horizontal
-        c.maximized_vertical   = not c.maximized_vertical
-    end),
-
-    awful.key({ altkey }, "F6", function (c) 
-        dbg_client(c) 
-    end),
-
+    awful.key({ modkey,           }, f,      function (c) c.fullscreen = not c.fullscreen  end),
+    awful.key({ modkey,           }, q,      function (c) c:kill()                         end),
+    awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
+    awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
+    awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
+    awful.key({ modkey,           }, t,      function (c) c.ontop = not c.ontop            end),
+    awful.key({ modkey,           }, n,      function (c) c.minimized = not c.minimized    end),
+    awful.key({ modkey,           }, m,
+        function (c)
+            c.maximized_horizontal = not c.maximized_horizontal
+            c.maximized_vertical   = not c.maximized_vertical
+        end),
     -- Client keys
-    awful.key({ altkey ,        }, "3", function(c) 
+    awful.key({ altkey ,        }, "w", function(c) 
         myrc.keybind.push_menu(chord_client(c), chord_menu_args, c)
     end)
 )
+
+-- Bind all key numbers to tags.
+-- Be careful: we use keycodes to make it works on any keyboard layout.
+-- This should map on the top row of your keyboard, usually 1 to 9.
+for i = 1, 9 do
+    globalkeys = awful.util.table.join(globalkeys,
+     
+        awful.key({ modkey }, "#" .. i + 9,
+                  function ()
+                        local screen = mouse.screen
+                        if myrc.tagman.get(i, screen) then
+                            awful.tag.viewonly(myrc.tagman.get(i, screen))
+                        end
+                  end),
+        awful.key({ modkey, "Control" }, "#" .. i + 9,
+                  function ()
+                      local screen = mouse.screen
+                      if myrc.tagman.get(i, screen) then
+                          awful.tag.viewtoggle(myrc.tagman.get(i, screen))
+                      end
+                  end),
+        awful.key({ modkey, "Shift" }, "#" .. i + 9,
+                  function ()
+                      local screen = mouse.screen
+                      if client.focus and myrc.tagman.get(i, screen) then
+                          awful.client.movetotag(myrc.tagman.get(i, screen))
+                      end
+                  end),
+        awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
+                  function (c)
+                      local screen = mouse.screen
+                      if client.focus and myrc.tagman.get(i, screen) then
+                          awful.client.toggletag(myrc.tagman.get(i, screen))
+                      end
+                  end))
+end
+
+-- Bind keyboard digits
+-- globalkeys = awful.util.table.join(
+
+    -- Main menu
+    -- awful.key({ altkey            }, "Escape", function() mymainmenu:show(mainmenu_args) end),
+
+    -- Awesome control
+    -- awful.key({ modkey, "Control" }, "q", awesome.quit),
+    -- awful.key({ modkey, "Control" }, "r", function() 
+        -- mypromptbox[mouse.screen].widget.text = awful.util.escape(awful.util.restart())
+    -- end),
+
+    -- Application hotkeys
+    -- awful.key({ modkey            }, "f", function () awful.util.spawn(env.browser) end),
+    -- awful.key({ modkey            }, "e", function () awful.util.spawn(env.screen)  end),
+    -- awful.key({                   }, "Scroll_Lock", function () awful.util.spawn(env.locker) end),
+    -- awful.key({ modkey            }, "r", function () mypromptbox[mouse.screen]:run() end),
+    -- awful.key({ modkey,           }, "m", function () run_or_raise("gmpc", { class = "Gmpc" }) end),
+    -- awful.key({ modkey            }, "p", function () awful.util.spawn("pidgin") end),
+    -- awful.key({ modkey            }, "c", function () run_or_raise("xterm -e calc", { class="XTerm", name = "calc" }) end),
+
+    -- Tag hotkeys
+    -- awful.key({ modkey, "Control" }, "m", function () toggle_tag("im") end),
+    -- awful.key({ modkey, "Control" }, "w", function () toggle_tag("work") end),
+    -- awful.key({ modkey, "Control" }, "n", function () toggle_tag("net") end),
+    -- awful.key({ modkey, "Control" }, "f", function () toggle_tag("fun") end),
+    -- awful.key({ modkey, "Control" }, "e", function () toggle_tag("sys") end),
+    -- awful.key({ modkey            }, "Tab", function() awful.tag.history.restore() end),
+
+    -- Client manipulation
+    -- awful.key({ altkey            }, "j", function () switch_to_client(-1) end),
+    -- awful.key({ altkey            }, "k", function () switch_to_client(1) end),
+    -- awful.key({ altkey            }, "1", function () switch_to_client(-1) end),
+    -- awful.key({ altkey            }, "2", function () switch_to_client(1) end),
+    -- awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(1) end),
+    -- awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx(-1) end),
+    -- awful.key({ altkey            }, "Tab", function() switch_to_client(0) end),
+
+    -- Layout manipulation
+    -- awful.key({ altkey,           }, "F1", awful.tag.viewprev ),
+    -- awful.key({ altkey,           }, "F2", awful.tag.viewnext ),
+    -- awful.key({ altkey,           }, "h", function () awful.tag.incmwfact(-0.05) end),
+    -- awful.key({ altkey,           }, "l", function () awful.tag.incmwfact(0.05) end),
+    -- awful.key({ altkey, "Shift"   }, "h", function () awful.tag.incnmaster(1) end),
+    -- awful.key({ altkey, "Shift"   }, "l", function () awful.tag.incnmaster(-1) end),
+    -- awful.key({ altkey, "Control" }, "h", function () awful.tag.incncol(1) end),
+    -- awful.key({ altkey, "Control" }, "l", function () awful.tag.incncol(-1) end),
+    -- awful.key({ modkey,           }, "space", function () awful.layout.inc(layouts, 1) end),
+    -- awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(layouts, -1) end),
+    -- awful.key({ altkey,           }, "e", function () 
+        -- myrc.keybind.push_menu(chord_mpd(), chord_menu_args) 
+    -- end),
+
+    -- Tagset operations (Win+Ctrl+s,<letter> chords)
+    -- awful.key({ altkey,           }, "F3", function () 
+        -- myrc.keybind.push_menu(chord_tags(), chord_menu_args) 
+    -- end)
+-- )
+
+root.keys(globalkeys)
+
+-- clientkeys = awful.util.table.join(
+    -- awful.key({ modkey }, "F1", function (c) 
+        -- local tag = myrc.tagman.getn(-1)
+        -- awful.client.movetotag(tag, c)
+        -- awful.tag.viewonly(tag)
+        -- c:raise()
+    -- end),
+    -- awful.key({ modkey }, "F2", function (c) 
+        -- local tag = myrc.tagman.getn(1)
+        -- awful.client.movetotag(tag, c)
+        -- awful.tag.viewonly(tag)
+        -- c:raise()
+    -- end),
+    -- awful.key({ altkey }, "F4", function (c) 
+        -- c:kill() 
+    -- end),
+    -- awful.key({ altkey }, "F5", function (c)
+        -- c.maximized_horizontal = not c.maximized_horizontal
+        -- c.maximized_vertical   = not c.maximized_vertical
+    -- end),
+
+    -- awful.key({ altkey }, "F6", function (c) 
+        -- dbg_client(c) 
+    -- end),
+
+    -- Client keys
+    -- awful.key({ altkey ,        }, "3", function(c) 
+        -- myrc.keybind.push_menu(chord_client(c), chord_menu_args, c)
+    -- end)
+-- )
 
 clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
@@ -734,7 +905,12 @@ client.add_signal("manage", function (c, startup)
         end
         kill_mousemode_menu(mymainmenu)
         kill_mousemode_menu(mycontextmenu)
-    end)
+        -- Enable sloppy focus
+        if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
+            and awful.client.focus.filter(c) then
+            client.focus = c
+        end
+        end)
 
     c:add_signal("property::floating", client_adjust_bwidth)
 
@@ -790,4 +966,25 @@ for s = 1, screen.count() do
         end
     end)
 end
+
+-- function run_once(prg)
+    -- if not prg then
+        -- do return nil end
+    -- end
+    -- proc = prg
+    -- if prg == "chromium" then
+        -- do proc = "chrome" end
+    -- elseif prg == terminal then
+        -- do proc = "xterm" end
+    -- end
+    -- awful.util.spawn_with_shell("pgrep -u $USER -x " .. proc .. " || (" .. prg .. ")")
+-- end
+
+
+-- run_once('xxkb')
+-- run_once("xset s off")
+-- run_once("xset dpms 0 0 0")
+awful.util.spawn("setxkbmap -layout 'us,ru' -option 'grp:caps_toggle'")
+awful.util.spawn("xxkb")
+awful.util.spawn("screen -x || screen -d -m")
 
